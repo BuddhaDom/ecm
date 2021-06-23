@@ -8,16 +8,15 @@ import os
 import re
 import json
 import tarfile
-import ConfigParser
-
-from six.moves import urllib
+import configparser as ConfigParser
 
 from tensorflow.python.platform import gfile
 import tensorflow as tf
 import numpy as np
-import math, os, sys
-reload(sys)
-sys.setdefaultencoding('utf8')
+import math, os, sys, importlib
+importlib.reload(sys)
+
+#D sys.setdefaultencoding('utf8')
 config = ConfigParser.ConfigParser()
 config.read('config')
 # Special vocabulary symbols - we always put them at the start.
@@ -197,7 +196,7 @@ def refine_wordvec(rvector, vocab, dim=100):
     return np.array(wordvec)
 
 def get_data(data_dir, post_vocabulary_size, response_vocabulary_size):
-    import scipy.io
+    import scipy
     path = os.path.join(data_dir, config.get('data', 'wordvec'))
     try:
         mdict = scipy.io.loadmat(path)
@@ -222,7 +221,7 @@ def get_ememory(data_dir, response_vocabulary_size):
     vocab_response, _ = initialize_vocabulary(os.path.join(data_dir, config.get('data', 'response_vocab_file') % response_vocabulary_size))
     dic = json.load(open(dic_path, 'r'))
     emem = []
-    for i in xrange(6):
+    for i in range(6):
         #if i == 0:
         #    emem.append(np.ones(response_vocabulary_size, dtype='float32'))
         #else:

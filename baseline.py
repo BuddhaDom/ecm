@@ -12,12 +12,11 @@ import time
 import json
 
 import numpy as np
-from six.moves import xrange    # pylint: disable=redefined-builtin
 import tensorflow as tf
 
 import data_utils
 import seq2seq_model
-import ConfigParser
+import configparser as ConfigParser
 
 config = ConfigParser.ConfigParser()
 config.read('config')
@@ -186,7 +185,7 @@ def train():
         dev_set = read_data(dev_path)
         dev_set = refine_data(dev_set)
         train_set = read_data(train_path, FLAGS.max_train_data_size)
-        train_bucket_sizes = [len(train_set[b]) for b in xrange(len(_buckets))]
+        train_bucket_sizes = [len(train_set[b]) for b in range(len(_buckets))]
         train_total_size = float(sum(train_bucket_sizes))
         print([len(x) for x in dev_set])
         print([len(x) for x in train_set])
@@ -194,7 +193,7 @@ def train():
         # to select a bucket. Length of [scale[i], scale[i+1]] is proportional to
         # the size if i-th training bucket, as used later.
         train_buckets_scale = [sum(train_bucket_sizes[:i + 1]) / train_total_size
-                                                     for i in xrange(len(train_bucket_sizes))]
+                                                     for i in range(len(train_bucket_sizes))]
         print(train_buckets_scale)
         
         # This is the training loop.
@@ -206,7 +205,7 @@ def train():
             # Choose a bucket according to data distribution. We pick a random number
             # in [0, 1] and use the corresponding interval in train_buckets_scale.
             random_number_01 = np.random.random_sample()
-            bucket_id = min([i for i in xrange(len(train_buckets_scale))
+            bucket_id = min([i for i in range(len(train_buckets_scale))
                                              if train_buckets_scale[i] > random_number_01])
 
             # Get a batch and make a step.
@@ -237,7 +236,7 @@ def train():
                 #dev set evaluation
                 total_loss = .0
                 total_len = .0
-                for bucket_id in xrange(len(_buckets)):
+                for bucket_id in range(len(_buckets)):
                     if len(dev_set[bucket_id]) == 0:
                         print("    eval: empty bucket %d" % (bucket_id))
                         continue
@@ -245,7 +244,7 @@ def train():
                     bucket_len = .0
                     for e in range(6):
                         len_data = len(dev_set[bucket_id][e])
-                        for batch in xrange(0, len_data, FLAGS.batch_size):
+                        for batch in range(0, len_data, FLAGS.batch_size):
                             step = min(FLAGS.batch_size, len_data-batch)
                             model.batch_size = step
                             encoder_inputs, decoder_inputs, target_weights, decoder_emotions = model.get_batch_data(
@@ -308,7 +307,7 @@ def decode():
                 token_ids = data_utils.sentence_to_token_ids(sentence, post_vocab)
                 int2emotion = ['null', 'like', 'sad', 'disgust', 'angry', 'happy']
                 for decoder_emotion in range(1, 6):
-                    bucket_id = min([b for b in xrange(len(_buckets))
+                    bucket_id = min([b for b in range(len(_buckets))
                                                      if _buckets[b][0] > len(token_ids)])
                     # Get a 1-element batch to feed the sentence to the model.
                     encoder_inputs, decoder_inputs, target_weights, decoder_emotions = model.get_batch_data(
@@ -327,11 +326,11 @@ def decode():
                         nounk = []
                         for i, (prb, _, prt) in enumerate(result):
                             if len(prb) == 0: continue
-                            for j in xrange(len(prb)):
+                            for j in range(len(prb)):
                                 p = prt[j]
                                 s = -1
                                 output = []
-                                for step in xrange(i-1, -1, -1):
+                                for step in range(i-1, -1, -1):
                                     s = symbol[step][p]
                                     p = parent[step][p]
                                     output.append(s)

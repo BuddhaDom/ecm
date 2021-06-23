@@ -3,8 +3,6 @@ from __future__ import division
 from __future__ import print_function
 
 # We disable pylint because we need python3 compatibility.
-from six.moves import xrange    # pylint: disable=redefined-builtin
-from six.moves import zip         # pylint: disable=redefined-builtin
 
 from tensorflow.python import shape
 from tensorflow.python.framework import dtypes
@@ -601,7 +599,7 @@ def attention_decoder(decoder_inputs,
         hidden_features = []
         v = []
         attention_vec_size = attn_size    # Size of query vectors for attention.
-        for a in xrange(num_heads):
+        for a in range(num_heads):
             k = variable_scope.get_variable("AttnW_%d" % a,
                                                                             [1, 1, attn_size, attention_vec_size])
             hidden_features.append(nn_ops.conv2d(hidden, k, [1, 1, 1, 1], "SAME"))
@@ -620,7 +618,7 @@ def attention_decoder(decoder_inputs,
                     if ndims:
                         assert ndims == 2
                 query = array_ops.concat(1, query_list)
-            for a in xrange(num_heads):
+            for a in range(num_heads):
                 with variable_scope.variable_scope("Attention_%d" % a):
                     y = linear(query, attention_vec_size, True)
                     y = array_ops.reshape(y, [-1, 1, 1, attention_vec_size])
@@ -640,7 +638,7 @@ def attention_decoder(decoder_inputs,
         prev = None
         batch_attn_size = array_ops.pack([batch_size, attn_size])
         attns = [array_ops.zeros(batch_attn_size, dtype=dtype)
-                         for _ in xrange(num_heads)]
+                         for _ in range(num_heads)]
         for a in attns:    # Ensure the second shape of attention vectors is set.
             a.set_shape([None, attn_size])
         if initial_state_attention:
@@ -798,7 +796,7 @@ def beam_attention_decoder(decoder_inputs,
         hidden_features = []
         v = []
         attention_vec_size = attn_size    # Size of query vectors for attention.
-        for a in xrange(num_heads):
+        for a in range(num_heads):
             k = variable_scope.get_variable("AttnW_%d" % a,
                                                                             [1, 1, attn_size, attention_vec_size])
             hidden_features.append(nn_ops.conv2d(hidden, k, [1, 1, 1, 1], "SAME"))
@@ -818,7 +816,7 @@ def beam_attention_decoder(decoder_inputs,
                     if ndims:
                         assert ndims == 2
                 query = array_ops.concat(1, query_list)
-            for a in xrange(num_heads):
+            for a in range(num_heads):
                 with variable_scope.variable_scope("Attention_%d" % a):
                     y = linear(query, attention_vec_size, True)
                     y = array_ops.reshape(y, [-1, 1, 1, attention_vec_size])
@@ -837,7 +835,7 @@ def beam_attention_decoder(decoder_inputs,
         prev = None
         batch_attn_size = array_ops.pack([batch_size, attn_size])
         attns = [array_ops.zeros(batch_attn_size, dtype=dtype)
-                         for _ in xrange(num_heads)]
+                         for _ in range(num_heads)]
         for a in attns:    # Ensure the second shape of attention vectors is set.
             a.set_shape([None, attn_size])
         if initial_state_attention:
